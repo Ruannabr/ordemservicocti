@@ -1,0 +1,1979 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordem de Serviço - CTI Celular</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        /* ====================================================
+           # VARIÁVEIS GLOBAIS
+           ==================================================== */
+        :root {
+            /* Cores principais */
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+            --gray-color: #95a5a6;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+
+            /* Espaçamentos */
+            --space-xs: 0.25rem;
+            --space-sm: 0.5rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2rem;
+
+            /* Bordas */
+            --border-radius: 0.5rem;
+            --border-width: 1px;
+
+            /* Sombras */
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+
+            /* Tipografia */
+            --font-main: 'Roboto', sans-serif;
+            --font-size-base: 1rem;
+            --line-height-base: 1.6;
+        }
+
+        /* ====================================================
+           # RESET E CONFIGURAÇÕES BASE
+           ==================================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+            min-height: 100%;
+        }
+
+        body {
+            font-family: var(--font-main);
+            font-size: var(--font-size-base);
+            line-height: var(--line-height-base);
+            color: var(--dark-color);
+            position: relative;
+            min-height: 100vh;
+            background-color: var(--light-color);
+        }
+
+        /* Camada de fundo com a imagem */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            
+            /* Imagem com overlay para melhor legibilidade */
+            background: 
+                linear-gradient(rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.92)),
+                url('img/logo\ cti.jpeg') center/cover no-repeat;
+            
+            /* Fallback caso a imagem não carregue */
+            background-color: var(--light-color);
+        }
+
+        /* ====================================================
+           # LAYOUT PRINCIPAL
+           ==================================================== */
+        .background-wrapper {
+            background: transparent;
+            min-height: 100vh;
+            padding: var(--space-xl);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            margin: var(--space-xl) auto;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .container:hover {
+            box-shadow: var(--shadow-lg);
+            background-color: rgba(255, 255, 255, 0.92);
+        }
+
+        /* ====================================================
+           # CABEÇALHO DO FORMULÁRIO
+           ==================================================== */
+        .form-header {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: var(--space-lg);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+        }
+
+        .logo-container {
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-sm);
+        }
+        .logo-container img {
+            width: 150px;
+            height: auto;
+            max-width: 100%;
+            margin-top: -30%;
+        }
+
+        .logo-icon {
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .form-header h1 {
+            font-size: 2rem;
+            margin-bottom: var(--space-sm);
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 400;
+            margin-top: -8%;
+        }
+
+        /* ====================================================
+           # FORMULÁRIO
+           ==================================================== */
+        .form-grid {
+            display: grid;
+            gap: var(--space-xl);
+            padding: var(--space-xl);
+        }
+
+        .form-section {
+            border: var(--border-width) solid rgba(0,0,0,0.1);
+            border-radius: var(--border-radius);
+            padding: var(--space-lg);
+            background-color: white;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-section:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-lg);
+            color: var(--primary-color);
+        }
+
+        .section-icon {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+        }
+
+        /* ====================================================
+           # ELEMENTOS DO FORMULÁRIO
+           ==================================================== */
+        .form-group {
+            margin-bottom: var(--space-md);
+            position: relative;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: var(--space-sm);
+            color: var(--dark-color);
+        }
+
+        .required {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        input:not([type="checkbox"]):not([type="radio"]),
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: var(--border-width) solid #ddd;
+            border-radius: var(--border-radius);
+            font-family: var(--font-main);
+            font-size: var(--font-size-base);
+            transition: all 0.2s ease;
+            background-color: #f9f9f9;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            background-color: white;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1rem;
+        }
+
+        /* Campos com ícones */
+        .icon-input label i {
+            margin-right: var(--space-sm);
+            color: var(--secondary-color);
+            width: 20px;
+            text-align: center;
+        }
+
+        .icon-input input {
+            padding-left: 2.5rem !important;
+            background-repeat: no-repeat;
+            background-position: 0.75rem center;
+            background-size: 1.2rem;
+        }
+
+        /* Checkboxes */
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-sm) var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: var(--space-sm);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            margin-right: var(--space-sm);
+            accent-color: var(--secondary-color);
+            transform: scale(1.2);
+        }
+
+        .checkbox-item label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0;
+            font-weight: normal;
+        }
+
+        .checkbox-item label i {
+            margin-right: var(--space-sm);
+            width: 20px;
+            color: var(--gray-color);
+        }
+
+        /* Radio buttons */
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-md);
+        }
+
+        .radio-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .radio-item input[type="radio"] {
+            margin-right: var(--space-sm);
+            accent-color: var(--secondary-color);
+            transform: scale(1.2);
+        }
+
+        .radio-item label {
+            margin-bottom: 0;
+        }
+
+        /* Termos e condições */
+        .terms-section {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .terms-content {
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .terms-content p {
+            margin-bottom: var(--space-md);
+        }
+
+        .terms-content i {
+            margin-right: var(--space-sm);
+            color: var(--secondary-color);
+        }
+
+        .signature-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-md);
+            margin-top: var(--space-lg);
+        }
+
+        .signature-input {
+            border: none;
+            border-bottom: 2px solid var(--gray-color);
+            border-radius: 0;
+            background-color: transparent;
+            padding-left: 0;
+            padding-bottom: var(--space-sm);
+        }
+
+        /* ====================================================
+           # BOTÕES E AÇÕES
+           ==================================================== */
+        .form-actions {
+            text-align: center;
+            margin-top: var(--space-lg);
+        }
+
+        .btn-submit {
+            background: linear-gradient(to right, var(--secondary-color), var(--primary-color));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-submit i {
+            font-size: 1.2rem;
+        }
+
+        /* Botões de ação */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-md);
+        }
+
+        .btn-action {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .btn-action i {
+            font-size: 1rem;
+        }
+
+        .btn-search {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-search:hover {
+            background-color: var(--primary-color);
+        }
+
+        .btn-new {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-new:hover {
+            background-color: #219653;
+        }
+
+        /* Modal de busca */
+        .search-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .search-modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-results {
+            margin-top: 20px;
+        }
+
+        .result-item {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .result-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .result-item h3 {
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+
+        .result-item p {
+            margin: 3px 0;
+            font-size: 0.9rem;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--accent-color);
+        }
+
+        /* ====================================================
+           # RESPONSIVIDADE
+           ==================================================== */
+        @media (max-width: 768px) {
+            .background-wrapper {
+                padding: var(--space-md);
+            }
+            
+            .container {
+                border-radius: 0;
+            }
+            
+            .form-grid {
+                padding: var(--space-md);
+                gap: var(--space-lg);
+            }
+            
+            .form-section {
+                padding: var(--space-md);
+            }
+            
+            .checkbox-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .radio-group {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-sm);
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .background-wrapper {
+                padding: 0;
+            }
+            
+            body::before {
+                background-attachment: scroll;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .checkbox-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo-container {
+                flex-direction: column;
+            }
+            
+            .form-header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .btn-submit {
+                width: 100%;
+            }
+            
+            .search-modal-content {
+                width: 95%;
+                padding: 15px;
+            }
+        }
+
+        /* Modal para visualização do PDF */
+        .pdf-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pdf-modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            height: 90%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pdf-viewer {
+            flex-grow: 1;
+            border: 1px solid #ddd;
+            margin-bottom: 15px;
+        }
+
+        .pdf-modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .pdf-modal-btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+            font-weight: 500;
+        }
+
+        .pdf-modal-btn-close {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .pdf-modal-btn-download {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .pdf-modal-btn-print {
+            background-color: #2ecc71;
+            color: white;
+        }
+        .pdf-modal-btn-whatsapp {
+            background-color: #25D366;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Modal para busca de OS -->
+    <div class="search-modal" id="searchModal">
+        <div class="search-modal-content">
+            <div class="search-header">
+                <h2>Buscar Ordem de Serviço</h2>
+                <button class="close-modal" id="closeSearchModal">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label for="searchInput">Buscar por nome, CPF ou telefone:</label>
+                <input type="text" id="searchInput" placeholder="Digite para buscar...">
+            </div>
+            
+            <button id="performSearch" class="btn-submit">
+                <i class="fas fa-search"></i> Buscar
+            </button>
+            
+            <div class="search-results" id="searchResults">
+                <!-- Os resultados serão exibidos aqui -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para visualização do PDF -->
+    <div class="pdf-modal" id="pdfModal">
+        <div class="pdf-modal-content">
+            <iframe class="pdf-viewer" id="pdfViewer" frameborder="0"></iframe>
+            <div class="pdf-modal-actions">
+                <button class="pdf-modal-btn pdf-modal-btn-print" id="btnPrint">
+                    <i class="fas fa-print"></i> Imprimir
+                </button>
+                <button class="pdf-modal-btn pdf-modal-btn-download" id="btnDownload">
+                    <i class="fas fa-download"></i> Baixar
+                </button>
+                <button class="pdf-modal-btn pdf-modal-btn-whatsapp" id="btnWhatsApp">
+                    <i class="fab fa-whatsapp"></i> Enviar
+                </button>
+                <button class="pdf-modal-btn pdf-modal-btn-close" id="btnCloseModal">
+                    <i class="fas fa-times"></i> Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="background-wrapper">
+        <div class="container">
+            <header class="form-header">
+                <div class="logo-container">
+                    <i><img src="img/cti5.png"></i>
+                </div>
+                <h1 class="subtitle">Ordem de Serviço</h1>
+            </header>
+
+            <!-- Botões de ação -->
+            <div class="action-buttons">
+                <button id="newOS" class="btn-action btn-new">
+                    <i class="fas fa-plus"></i> Nova OS
+                </button>
+                <button id="searchOS" class="btn-action btn-search">
+                    <i class="fas fa-search"></i> Buscar OS
+                </button>
+            </div>
+
+            <form id="os-form" class="form-grid">
+                <!-- Seção Técnico e Data -->
+                <fieldset class="form-section">
+                    <div class="form-row">
+                        <div class="form-group icon-input">
+                            <label for="tecnico"><i class="fas fa-user-tie"></i> Técnico Responsável <span class="required">*</span></label>
+                            <input type="text" id="tecnico" name="tecnico" required>
+                        </div>
+                        <div class="form-group icon-input">
+                            <label for="data"><i class="far fa-calendar-alt"></i> Data <span class="required">*</span></label>
+                            <input type="date" id="data" name="data" required>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Seção Cliente -->
+                <fieldset class="form-section">
+                    <legend class="section-title">
+                        <i class="fas fa-user section-icon"></i>
+                        <h2>Dados do Cliente</h2>
+                    </legend>
+                    
+                    <div class="form-group icon-input">
+                        <label for="nome"><i class="fas fa-signature"></i> Nome completo <span class="required">*</span></label>
+                        <input type="text" id="nome" name="nome" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group icon-input">
+                            <label for="cpf"><i class="fas fa-id-card"></i> CPF</label>
+                            <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00">
+                        </div>
+
+                        <div class="form-group icon-input">
+                            <label for="rg"><i class="fas fa-address-card"></i> RG</label>
+                            <input type="text" id="rg" name="rg">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group icon-input">
+                            <label for="contato"><i class="fas fa-phone"></i> Contato <span class="required">*</span></label>
+                            <input type="tel" id="contato" name="contato" required placeholder="(00) 00000-0000">
+                        </div>
+                        <div class="form-group icon-input">
+                            <label for="email"><i class="fas fa-envelope"></i> E-mail</label>
+                            <input type="email" id="email" name="email" placeholder="seu@email.com">
+                        </div>
+                    </div>
+
+                    <div class="form-group icon-input">
+                        <label for="endereco"><i class="fas fa-map-marker-alt"></i> Endereço</label>
+                        <input type="text" id="endereco" name="endereco" placeholder="Rua, número">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group icon-input">
+                            <label for="bairro"><i class="fas fa-city"></i> Bairro</label>
+                            <input type="text" id="bairro" name="bairro">
+                        </div>
+                        <div class="form-group icon-input">
+                            <label for="cidade"><i class="fas fa-building"></i> Cidade</label>
+                            <input type="text" id="cidade" name="cidade">
+                        </div>
+                        <div class="form-group icon-input">
+                            <label for="cep"><i class="fas fa-mail-bulk"></i> CEP</label>
+                            <input type="text" id="cep" name="cep" placeholder="00000-000">
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Seção Equipamento -->
+                <fieldset class="form-section">
+                    <legend class="section-title">
+                        <i class="fas fa-mobile-alt section-icon"></i>
+                        <h2>Dados do Equipamento</h2>
+                    </legend>
+                    
+                    <div class="form-row">
+                        <div class="form-group icon-input">
+                            <label for="imei1"><i class="fas fa-barcode"></i> IMEI 1</label>
+                            <input type="text" id="imei1" name="imei1">
+                        </div>
+                        <div class="form-group icon-input">
+                            <label for="marca"><i class="fas fa-tag"></i> Marca <span class="required">*</span></label>
+                            <input type="text" id="marca" name="marca" required>
+                        </div>
+                        <div class="form-group icon-input">
+                            <label for="senha"><i class="fas fa-lock"></i> Senha</label>
+                            <input type="text" id="senha" name="senha">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group icon-input">
+                            <label for="imei2"><i class="fas fa-barcode"></i> IMEI 2</label>
+                            <input type="text" id="imei2" name="imei2">
+                        </div>
+                        <div class="form-group icon-input">
+                            <label for="modelo"><i class="fas fa-mobile"></i> Modelo <span class="required">*</span></label>
+                            <input type="text" id="modelo" name="modelo" required>
+                        </div>
+                        <div class="form-group icon-input">
+                            <label for="cor"><i class="fas fa-palette"></i> Cor</label>
+                            <input type="text" id="cor" name="cor">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group icon-input">
+                            <label for="num_serie"><i class="fas fa-hashtag"></i> Nº Série</label>
+                            <input type="text" id="num_serie" name="num_serie">
+                        </div>
+                        <div class="form-group icon-input">
+                            <label for="bateria"><i class="fas fa-battery-three-quarters"></i> Bateria</label>
+                            <input type="text" id="bateria" name="bateria">
+                        </div>
+                        <div class="form-group icon-input">
+                            <label for="acessorio"><i class="fas fa-headphones"></i> Acessório</label>
+                            <input type="text" id="acessorio" name="acessorio">
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Seção Problemas -->
+                <fieldset class="form-section">
+                    <legend class="section-title">
+                        <i class="fas fa-exclamation-triangle section-icon"></i>
+                        <h2>Descrição do Problema</h2>
+                    </legend>
+                    
+                    <div class="checkbox-grid">
+                        <!-- Linha 1 -->
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema1" name="problema[]" value="Não liga">
+                            <label for="problema1"><i class="fas fa-power-off"></i> 1 - Não liga</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema2" name="problema[]" value="Reinicia">
+                            <label for="problema2"><i class="fas fa-redo"></i> 2 - Reinicia</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema3" name="problema[]" value="Travado">
+                            <label for="problema3"><i class="fas fa-lock"></i> 3 - Travado</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema4" name="problema[]" value="Touch não funciona">
+                            <label for="problema4"><i class="fas fa-hand-pointer"></i> 4 - Touch não funciona</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema5" name="problema[]" value="Touch Fantasma">
+                            <label for="problema5"><i class="fas fa-ghost"></i> 5 - Touch Fantasma</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema6" name="problema[]" value="Display quebrado">
+                            <label for="problema6"><i class="fas fa-mobile-screen"></i> 6 - Display quebrado</label>
+                        </div>
+                        
+                        <!-- Linha 2 -->
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema7" name="problema[]" value="Frontal completo quebrado">
+                            <label for="problema7"><i class="fas fa-mobile-screen-button"></i> 7 - Frontal completo quebrado</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema8" name="problema[]" value="Sem brilho na tela">
+                            <label for="problema8"><i class="fas fa-sun"></i> 8 - Sem brilho na tela</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema9" name="problema[]" value="Tela piscando">
+                            <label for="problema9"><i class="fas fa-lightbulb"></i> 9 - Tela piscando</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema10" name="problema[]" value="Liga em tela preta">
+                            <label for="problema10"><i class="fas fa-moon"></i> 10 - Liga em tela preta</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema11" name="problema[]" value="Não carrega">
+                            <label for="problema11"><i class="fas fa-battery-empty"></i> 11 - Não carrega</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema12" name="problema[]" value="Carga falsa">
+                            <label for="problema12"><i class="fas fa-bolt"></i> 12 - Carga falsa</label>
+                        </div>
+                        
+                        <!-- Linha 3 -->
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema13" name="problema[]" value="Não segura carga">
+                            <label for="problema13"><i class="fas fa-battery-quarter"></i> 13 - Não segura carga</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema14" name="problema[]" value="Sem auxílio ou estourado">
+                            <label for="problema14"><i class="fas fa-volume-up"></i> 14 - Sem auxílio ou estourado</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema15" name="problema[]" value="Entrada fone não funciona">
+                            <label for="problema15"><i class="fas fa-headphones"></i> 15 - Entrada fone não funciona</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema16" name="problema[]" value="Não grava voz">
+                            <label for="problema16"><i class="fas fa-microphone"></i> 16 - Não grava voz</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema17" name="problema[]" value="Câmara frontal não funciona">
+                            <label for="problema17"><i class="fas fa-camera"></i> 17 - Câmara frontal não funciona</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema18" name="problema[]" value="Câmara traseira não funciona">
+                            <label for="problema18"><i class="fas fa-camera-retro"></i> 18 - Câmara traseira não funciona</label>
+                        </div>
+                        
+                        <!-- Linha 4 -->
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema19" name="problema[]" value="Flash não funciona">
+                            <label for="problema19"><i class="fas fa-lightbulb"></i> 19 - Flash não funciona</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema20" name="problema[]" value="Wi-fi não funciona">
+                            <label for="problema20"><i class="fas fa-wifi"></i> 20 - Wi-fi não funciona</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema21" name="problema[]" value="Bluetooth não funciona">
+                            <label for="problema21"><i class="fas fa-bluetooth"></i> 21 - Bluetooth não funciona</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema22" name="problema[]" value="Digital não funciona">
+                            <label for="problema22"><i class="fas fa-fingerprint"></i> 22 - Digital não funciona</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema23" name="problema[]" value="Bússula não funciona">
+                            <label for="problema23"><i class="fas fa-compass"></i> 23 - Bússula não funciona</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema24" name="problema[]" value="Não vibra">
+                            <label for="problema24"><i class="fas fa-vibrate"></i> 24 - Não vibra</label>
+                        </div>
+                        
+                        <!-- Linha 5 -->
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema25" name="problema[]" value="Sem sinal sim">
+                            <label for="problema25"><i class="fas fa-sim-card"></i> 25 - Sem sinal sim</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema26" name="problema[]" value="Não faz ligação">
+                            <label for="problema26"><i class="fas fa-phone"></i> 26 - Não faz ligação</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema27" name="problema[]" value="Super Aquecendo">
+                            <label for="problema27"><i class="fas fa-temperature-high"></i> 27 - Super Aquecendo</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema28" name="problema[]" value="Não reconhece chip">
+                            <label for="problema28"><i class="fas fa-sim-card"></i> 28 - Não reconhece chip</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema29" name="problema[]" value="Não reconhece cartão SD">
+                            <label for="problema29"><i class="fas fa-sd-card"></i> 29 - Não reconhece cartão SD</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema30" name="problema[]" value="Não abre galeria de fotos">
+                            <label for="problema30"><i class="fas fa-images"></i> 30 - Não abre galeria de fotos</label>
+                        </div>
+                        
+                        <!-- Linha 6 -->
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="problema31" name="problema[]" value="Molhou">
+                            <label for="problema31"><i class="fas fa-tint"></i> 31 - Molhou</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="obs"><i class="fas fa-info-circle"></i> Observações</label>
+                        <textarea id="obs" name="obs" rows="3" placeholder="Problemas adicionais não assinalados acima podem ser encontrados no laboratório técnico ao abrir o aparelho!"></textarea>
+                    </div>
+                </fieldset>
+
+                <!-- Seção Pagamento e Garantia -->
+                <fieldset class="form-section">
+                    <legend class="section-title">
+                        <i class="fas fa-money-bill-wave section-icon"></i>
+                        <h2>Pagamento e Garantia</h2>
+                    </legend>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-dollar-sign"></i> Valor</label>
+                            <input type="text" id="valor" name="valor" placeholder="R$ 0,00">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-credit-card"></i> Forma de Pagamento</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="pagamento-cartao" name="pagamento" value="Cartão">
+                                <label for="pagamento-cartao">Cartão</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="pagamento-dinheiro" name="pagamento" value="Dinheiro">
+                                <label for="pagamento-dinheiro">Dinheiro</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="pagamento-pix" name="pagamento" value="PIX">
+                                <label for="pagamento-pix">PIX</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="pagamento-moeda" name="pagamento" value="Moeda Social">
+                                <label for="pagamento-moeda">Moeda Social</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-shield-alt"></i> Garantia</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="garantia-30" name="garantia" value="30 dias">
+                                <label for="garantia-30">30 dias</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="garantia-60" name="garantia" value="60 dias">
+                                <label for="garantia-60">60 dias</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="garantia-90" name="garantia" value="90 dias">
+                                <label for="garantia-90">90 dias</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="garantia-120" name="garantia" value="120 dias">
+                                <label for="garantia-120">120 dias</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="garantia-nenhuma" name="garantia" value="Sem garantia">
+                                <label for="garantia-nenhuma">Sem garantia</label>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Termos e Condições -->
+                <fieldset class="form-section terms-section">
+                    <legend class="section-title">
+                        <i class="fas fa-file-contract section-icon"></i>
+                        <h2>Termos e Condições</h2>
+                    </legend>
+                    
+                    <div class="terms-content">
+                        <p><i class="fas fa-exclamation-circle"></i> LEIA COM ATENÇÃO! Não aceitamos reclamações posteriores, por isso confira seu equipamento no ato do recebimento do mesmo! Só efetuaremos a entrega do equipamento mediante apresentação deste documento! Retirada por terceiros só com autorização e apresentação do documento do titular! Prazo para retirada do aparelho é de 90 dias. A partir deste prazo, será cobrada uma taxa diária de 5% do valor do reparo.</p>
+                        
+                        <p><i class="fas fa-check-circle"></i> "Declaro ter lido atentamente e estar ciente que o aparelho está nas condições assinaladas acima"</p>
+                        
+                        <div class="signature-row">
+                            <div class="form-group">
+                                <label for="assinatura-tecnico">Ass. Técnico</label>
+                                <input type="text" id="assinatura-tecnico" name="assinatura_tecnico" class="signature-input">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="assinatura-cliente">Ass. Cliente</label>
+                                <input type="text" id="assinatura-cliente" name="assinatura_cliente" class="signature-input">
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <!-- Rodapé do Formulário -->
+                <div class="form-actions">
+                    <button type="button" id="gerar-pdf" class="btn-submit">
+                        <i class="fas fa-file-alt"></i> Gerar Ordem de Serviço
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase App (obrigatório) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+
+    <!-- Firebase Firestore (para o banco de dados) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Inicializa o jsPDF
+        const { jsPDF } = window.jspdf;
+        
+        // Elementos do modal
+        const pdfModal = document.getElementById('pdfModal');
+        const pdfViewer = document.getElementById('pdfViewer');
+        const btnCloseModal = document.getElementById('btnCloseModal');
+        const btnDownload = document.getElementById('btnDownload');
+        const btnPrint = document.getElementById('btnPrint');
+        const btnWhatsApp = document.getElementById('btnWhatsApp');
+        
+        // Elementos da busca
+        const searchModal = document.getElementById('searchModal');
+        const searchOS = document.getElementById('searchOS');
+        const closeSearchModal = document.getElementById('closeSearchModal');
+        const performSearch = document.getElementById('performSearch');
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const newOS = document.getElementById('newOS');
+        
+        // Variável para armazenar o PDF gerado
+        let generatedPdf = null;
+        let currentOSId = null;
+        
+        // Configura os eventos do modal
+        btnCloseModal.addEventListener('click', () => {
+            pdfModal.style.display = 'none';
+        });
+        
+        btnDownload.addEventListener('click', () => {
+            if (generatedPdf) {
+                const nomeCliente = document.getElementById('nome').value.split(' ')[0];
+                const data = formatDate(document.getElementById('data').value, 'dd-mm-yyyy');
+                generatedPdf.save(`OS_${nomeCliente}_${data}.pdf`);
+            }
+        });
+        
+        btnPrint.addEventListener('click', () => {
+            if (generatedPdf) {
+                generatedPdf.autoPrint();
+                const blob = generatedPdf.output('blob');
+                const url = URL.createObjectURL(blob);
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = url;
+                document.body.appendChild(iframe);
+                iframe.contentWindow.print();
+            }
+        });
+        
+        // Fecha o modal ao clicar fora
+        pdfModal.addEventListener('click', (e) => {
+            if (e.target === pdfModal) {
+                pdfModal.style.display = 'none';
+            }
+        });
+
+        // Configura os eventos do modal de busca
+        searchOS.addEventListener('click', () => {
+            searchModal.style.display = 'flex';
+            searchInput.focus();
+        });
+        
+        closeSearchModal.addEventListener('click', () => {
+            searchModal.style.display = 'none';
+        });
+        
+        searchModal.addEventListener('click', (e) => {
+            if (e.target === searchModal) {
+                searchModal.style.display = 'none';
+            }
+        });
+        
+        newOS.addEventListener('click', () => {
+            resetForm();
+        });
+
+        // Sua configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCoJfCWWkimbfyIt9PgRCKiIfCJqkfo9oA",
+            authDomain: "cticelular-620cd.firebaseapp.com",
+            projectId: "cticelular-620cd",
+            storageBucket: "cticelular-620cd.appspot.com",
+            messagingSenderId: "337216928914",
+            appId: "1:337216928914:web:afc01150611d769b243a4b"
+        };
+
+        // Inicialize o Firebase
+        firebase.initializeApp(firebaseConfig);
+        
+        // Inicialize o Firestore
+        const db = firebase.firestore();
+        
+        // Função para adicionar marca d'água
+        async function addWatermark(doc) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.src = 'img/cti5.png';
+                img.onload = function() {
+                    const pageWidth = doc.internal.pageSize.getWidth();
+                    const pageHeight = doc.internal.pageSize.getHeight();
+                    
+                    // Configura a marca d'água com opacidade
+                    doc.setGState(new doc.GState({opacity: 0.1}));
+                    
+                    // Calcula a posição para centralizar
+                    const imgWidth = 150;
+                    const imgHeight = (img.height * imgWidth) / img.width;
+                    const x = (pageWidth - imgWidth) / 2;
+                    const y = (pageHeight - imgHeight) / 2;
+                    
+                    // Adiciona a imagem como marca d'água
+                    doc.addImage(img, 'PNG', x, y, imgWidth, imgHeight);
+                    
+                    // Restaura a opacidade
+                    doc.setGState(new doc.GState({opacity: 1}));
+                    resolve();
+                };
+                img.onerror = function() {
+                    console.log("Erro ao carregar imagem de marca d'água");
+                    resolve();
+                };
+            });
+        }
+
+        // Função para salvar OS no Firebase
+        async function saveOS() {
+            const osData = getFormData();
+            
+            try {
+                if (currentOSId) {
+                    // Atualiza OS existente
+                    await db.collection('ordens_servico').doc(currentOSId).update(osData);
+                    alert('Ordem de Serviço atualizada com sucesso!');
+                } else {
+                    // Cria nova OS
+                    const docRef = await db.collection('ordens_servico').add(osData);
+                    currentOSId = docRef.id;
+                    alert('Ordem de Serviço salva com sucesso! ID: ' + docRef.id);
+                }
+                return true;
+            } catch (error) {
+                console.error('Erro ao salvar OS: ', error);
+                alert('Erro ao salvar Ordem de Serviço: ' + error.message);
+                return false;
+            }
+        }
+
+        // Função para buscar OS no Firebase
+        async function searchOSInFirebase(searchTerm) {
+            try {
+                // Limpa resultados anteriores
+                searchResults.innerHTML = '';
+                
+                if (!searchTerm) {
+                    alert('Por favor, digite um termo para buscar');
+                    return;
+                }
+                
+                // Busca por nome
+                const snapshotNome = await db.collection('ordens_servico')
+                    .where('nome', '>=', searchTerm)
+                    .where('nome', '<=', searchTerm + '\uf8ff')
+                    .get();
+                
+                // Busca por CPF
+                const snapshotCPF = await db.collection('ordens_servico')
+                    .where('cpf', '>=', searchTerm)
+                    .where('cpf', '<=', searchTerm + '\uf8ff')
+                    .get();
+                
+                // Busca por telefone
+                const snapshotTelefone = await db.collection('ordens_servico')
+                    .where('contato', '>=', searchTerm)
+                    .where('contato', '<=', searchTerm + '\uf8ff')
+                    .get();
+                
+                // Combina resultados
+                const results = [];
+                snapshotNome.forEach(doc => results.push({id: doc.id, ...doc.data()}));
+                snapshotCPF.forEach(doc => {
+                    if (!results.some(item => item.id === doc.id)) {
+                        results.push({id: doc.id, ...doc.data()});
+                    }
+                });
+                snapshotTelefone.forEach(doc => {
+                    if (!results.some(item => item.id === doc.id)) {
+                        results.push({id: doc.id, ...doc.data()});
+                    }
+                });
+                
+                if (results.length === 0) {
+                    searchResults.innerHTML = '<p>Nenhuma OS encontrada com esse critério de busca.</p>';
+                    return;
+                }
+                
+                // Exibe resultados
+                results.forEach(os => {
+                    const item = document.createElement('div');
+                    item.className = 'result-item';
+                    item.innerHTML = `
+                        <h3>${os.nome}</h3>
+                        <p><strong>CPF:</strong> ${os.cpf || 'Não informado'}</p>
+                        <p><strong>Telefone:</strong> ${os.contato}</p>
+                        <p><strong>Data:</strong> ${formatDate(os.data, 'dd/mm/yyyy')}</p>
+                        <p><strong>Equipamento:</strong> ${os.marca} ${os.modelo}</p>
+                    `;
+                    
+                    item.addEventListener('click', () => {
+                        loadOS(os.id, os);
+                        searchModal.style.display = 'none';
+                    });
+                    
+                    searchResults.appendChild(item);
+                });
+                
+            } catch (error) {
+                console.error('Erro ao buscar OS: ', error);
+                searchResults.innerHTML = '<p>Ocorreu um erro ao buscar as ordens de serviço.</p>';
+            }
+        }
+
+        // Função para carregar OS no formulário
+        function loadOS(id, osData) {
+            currentOSId = id;
+            
+            // Preenche os campos do formulário
+            document.getElementById('tecnico').value = osData.tecnico || '';
+            document.getElementById('data').value = osData.data || '';
+            document.getElementById('nome').value = osData.nome || '';
+            document.getElementById('cpf').value = osData.cpf || '';
+            document.getElementById('rg').value = osData.rg || '';
+            document.getElementById('contato').value = osData.contato || '';
+            document.getElementById('email').value = osData.email || '';
+            document.getElementById('endereco').value = osData.endereco || '';
+            document.getElementById('bairro').value = osData.bairro || '';
+            document.getElementById('cidade').value = osData.cidade || '';
+            document.getElementById('cep').value = osData.cep || '';
+            document.getElementById('imei1').value = osData.imei1 || '';
+            document.getElementById('marca').value = osData.marca || '';
+            document.getElementById('senha').value = osData.senha || '';
+            document.getElementById('imei2').value = osData.imei2 || '';
+            document.getElementById('modelo').value = osData.modelo || '';
+            document.getElementById('cor').value = osData.cor || '';
+            document.getElementById('num_serie').value = osData.num_serie || '';
+            document.getElementById('bateria').value = osData.bateria || '';
+            document.getElementById('acessorio').value = osData.acessorio || '';
+            document.getElementById('obs').value = osData.obs || '';
+            document.getElementById('valor').value = osData.valor || '';
+            
+            // Marca os problemas
+            const checkboxes = document.querySelectorAll('input[name="problema[]"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = osData.problema && osData.problema.includes(checkbox.value);
+            });
+            
+            // Seleciona forma de pagamento
+            if (osData.pagamento) {
+                document.querySelector(`input[name="pagamento"][value="${osData.pagamento}"]`).checked = true;
+            }
+            
+            // Seleciona garantia
+            if (osData.garantia) {
+                document.querySelector(`input[name="garantia"][value="${osData.garantia}"]`).checked = true;
+            }
+            
+            // Assinaturas
+            document.getElementById('assinatura-tecnico').value = osData.assinatura_tecnico || '';
+            document.getElementById('assinatura-cliente').value = osData.assinatura_cliente || '';
+        }
+
+        // Função para resetar o formulário
+        function resetForm() {
+            document.getElementById('os-form').reset();
+            currentOSId = null;
+            
+            // Desmarca todos os checkboxes de problemas
+            document.querySelectorAll('input[name="problema[]"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // Foca no primeiro campo
+            document.getElementById('tecnico').focus();
+        }
+
+        // Função para obter dados do formulário
+        function getFormData() {
+            const problemas = [];
+            document.querySelectorAll('input[name="problema[]"]:checked').forEach(checkbox => {
+                problemas.push(checkbox.value);
+            });
+            
+            const pagamento = document.querySelector('input[name="pagamento"]:checked');
+            const garantia = document.querySelector('input[name="garantia"]:checked');
+            
+            return {
+                tecnico: document.getElementById('tecnico').value,
+                data: document.getElementById('data').value,
+                nome: document.getElementById('nome').value,
+                cpf: document.getElementById('cpf').value,
+                rg: document.getElementById('rg').value,
+                contato: document.getElementById('contato').value,
+                email: document.getElementById('email').value,
+                endereco: document.getElementById('endereco').value,
+                bairro: document.getElementById('bairro').value,
+                cidade: document.getElementById('cidade').value,
+                cep: document.getElementById('cep').value,
+                imei1: document.getElementById('imei1').value,
+                marca: document.getElementById('marca').value,
+                senha: document.getElementById('senha').value,
+                imei2: document.getElementById('imei2').value,
+                modelo: document.getElementById('modelo').value,
+                cor: document.getElementById('cor').value,
+                num_serie: document.getElementById('num_serie').value,
+                bateria: document.getElementById('bateria').value,
+                acessorio: document.getElementById('acessorio').value,
+                problema: problemas,
+                obs: document.getElementById('obs').value,
+                valor: document.getElementById('valor').value,
+                pagamento: pagamento ? pagamento.value : null,
+                garantia: garantia ? garantia.value : null,
+                assinatura_tecnico: document.getElementById('assinatura-tecnico').value,
+                assinatura_cliente: document.getElementById('assinatura-cliente').value,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+        }
+
+        // Função para formatar data
+        function formatDate(dateInput, format = 'dd/mm/yyyy') {
+            try {
+                if (!dateInput) return 'Não informado';
+            
+                let date;
+                
+                // Se for um input type="date" (string no formato yyyy-mm-dd)
+                if (typeof dateInput === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(dateInput)) {
+                    const parts = dateInput.split('-');
+                    date = new Date(parts[0], parts[1] - 1, parts[2]);
+                } 
+                // Se já for um objeto Date
+                else if (dateInput instanceof Date) {
+                    date = dateInput;
+                }
+                // Se for uma string no formato dd/mm/yyyy
+                else if (typeof dateInput === 'string' && dateInput.includes('/')) {
+                    const parts = dateInput.split('/');
+                    date = new Date(parts[2], parts[1] - 1, parts[0]);
+                }
+                // Se for um timestamp do Firestore
+                else if (dateInput && dateInput.toDate) {
+                    date = dateInput.toDate();
+                }
+                // Se não reconhecer o formato, retorna o valor original
+                else {
+                    return dateInput;
+                }
+                
+                // Formata a data conforme solicitado
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                
+                if (format === 'dd-mm-yyyy') {
+                    return `${day}-${month}-${year}`;
+                } else {
+                    return `${day}/${month}/${year}`;
+                }
+            } catch (e) {
+                console.error('Erro ao formatar data:', e);
+                return 'Data inválida';
+            }
+        }
+
+        // Evento de busca
+        performSearch.addEventListener('click', () => {
+            const searchTerm = searchInput.value.trim();
+            searchOSInFirebase(searchTerm);
+        });
+
+        // Busca ao pressionar Enter
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const searchTerm = searchInput.value.trim();
+                searchOSInFirebase(searchTerm);
+            }
+        });
+
+        // Evento para enviar por WhatsApp
+        btnWhatsApp.addEventListener('click', function() {
+            if (!generatedPdf) return;
+            
+            const nomeCliente = document.getElementById('nome').value.split(' ')[0];
+            const data = formatDate(document.getElementById('data').value, 'dd-mm-yyyy');
+            const telefone = document.getElementById('contato').value.replace(/\D/g, '');
+            
+            if (!telefone) {
+                alert('Número de telefone do cliente não informado.');
+                return;
+            }
+            
+            // Gerar PDF como blob
+            const blob = generatedPdf.output('blob');
+            const file = new File([blob], `OS_${nomeCliente}_${data}.pdf`, { type: 'application/pdf' });
+            
+            // Criar URL do arquivo
+            const fileUrl = URL.createObjectURL(file);
+            
+            // Mensagem padrão
+            const mensagem = `Olá ${nomeCliente}, segue em anexo a Ordem de Serviço referente ao atendimento realizado em ${formatDate(document.getElementById('data').value)}.`;
+            
+            // URL do WhatsApp
+            const whatsappUrl = `https://wa.me/55${telefone}?text=${encodeURIComponent(mensagem)}`;
+            
+            // Abre o WhatsApp em uma nova aba
+            window.open(whatsappUrl, '_blank');
+            
+            // Note: O envio de arquivos pelo WhatsApp Web não é suportado diretamente via URL
+            // Esta solução abre o chat com o cliente e a mensagem, mas o arquivo precisa ser anexado manualmente
+            alert('O WhatsApp Web será aberto. Por favor, anexe o PDF manualmente.');
+        });
+
+        // Formatação automática de campos
+        document.getElementById('cpf').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 3) value = value.replace(/^(\d{3})/, '$1.');
+            if (value.length > 7) value = value.replace(/^(\d{3})\.(\d{3})/, '$1.$2.');
+            if (value.length > 11) value = value.replace(/^(\d{3})\.(\d{3})\.(\d{3})/, '$1.$2.$3-');
+            e.target.value = value.substring(0, 14);
+        });
+
+        document.getElementById('cep').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 5) value = `${value.substring(0, 5)}-${value.substring(5, 8)}`;
+            e.target.value = value.substring(0, 9);
+        });
+
+        document.getElementById('valor').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            value = (value / 100).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+            e.target.value = value;
+        });  
+
+        document.getElementById('contato').addEventListener('input', function(e) {
+    let value = e.target.value.replace(/\D/g, '');
+    
+    // Aplica a formatação apenas quando tiver dígitos suficientes
+    if (value.length > 0) {
+        value = value.substring(0, 11); // Limita ao tamanho máximo de um telefone com DDD
+        
+        // Formatação para (XX) XXXXX-XXXX
+        if (value.length > 2) {
+            value = `(${value.substring(0, 2)}) ${value.substring(2)}`;
+        }
+        if (value.length > 10) {
+            value = `${value.substring(0, 10)}-${value.substring(10)}`;
+        }
+    }
+    
+    e.target.value = value;
+});
+
+        // Função para gerar o PDF
+        document.getElementById('gerar-pdf').addEventListener('click', async function() {
+            // Validar campos obrigatórios
+            if (!document.getElementById('tecnico').value || 
+                !document.getElementById('data').value || 
+                !document.getElementById('nome').value || 
+                !document.getElementById('contato').value) {
+                alert('Por favor, preencha todos os campos obrigatórios marcados com *');
+                return;
+            }
+            
+            // Salvar no Firebase primeiro
+            const saved = await saveOS();
+            if (!saved) return;
+
+            // Criar o PDF
+            const doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            // Configurações do PDF
+            const margin = 15;
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const maxWidth = pageWidth - 2 * margin;
+            let yPos = 20;
+
+            // Adicionar marca d'água
+            await addWatermark(doc);
+
+            // Adicionar cabeçalho
+            doc.setFontSize(16);
+            doc.setTextColor(44, 62, 80);
+            doc.setFont('helvetica', 'bold');
+            doc.text('CTI CELULAR - ORDEM DE SERVIÇO', pageWidth / 2, yPos, { align: 'center' });
+            yPos += 8;
+
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text('Assistência Técnica Especializada', pageWidth / 2, yPos, { align: 'center' });
+            yPos += 15;
+
+            // Informações básicas
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Técnico:', margin, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(document.getElementById('tecnico').value, margin + 15, yPos);
+            
+            doc.setFont('helvetica', 'bold');
+            doc.text('Data:', pageWidth - margin - 50, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(formatDate(document.getElementById('data').value), pageWidth - margin - 15, yPos, { align: 'right' });
+
+            yPos += 15;
+
+            // Seção Cliente - Título
+            doc.setDrawColor(44, 62, 80);
+            doc.setLineWidth(0.5);
+            doc.line(margin, yPos - 5, pageWidth - margin, yPos - 5);
+            
+            doc.setFontSize(12);
+            doc.setTextColor(44, 62, 80);
+            doc.setFont('helvetica', 'bold');
+            doc.text('DADOS DO CLIENTE', margin, yPos);
+            yPos += 8;
+
+            // Seção Cliente - Conteúdo
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            
+            // Linha 1
+            doc.setFont('helvetica', 'bold');
+            doc.text('Nome:', margin, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(document.getElementById('nome').value, margin + 12, yPos);
+            
+            doc.setFont('helvetica', 'bold');
+            doc.text('CPF:', margin + 70, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(document.getElementById('cpf').value || 'Não informado', margin + 80, yPos);
+            yPos += 5;
+
+            // Linha 2
+            doc.setFont('helvetica', 'bold');
+            doc.text('RG:', margin, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(document.getElementById('rg').value || 'Não informado', margin + 12, yPos);
+            
+            doc.setFont('helvetica', 'bold');
+            doc.text('Contato:', margin + 70, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(document.getElementById('contato').value, margin + 85, yPos);
+            yPos += 5;
+
+            // Linha 3
+            doc.setFont('helvetica', 'bold');
+            doc.text('E-mail:', margin, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(document.getElementById('email').value || 'Não informado', margin + 15, yPos);
+            yPos += 5;
+
+            // Linha 4
+            doc.setFont('helvetica', 'bold');
+            doc.text('Endereço:', margin, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(document.getElementById('endereco').value || 'Não informado', margin + 20, yPos);
+            yPos += 5;
+
+            // Linha 5
+            doc.setFont('helvetica', 'bold');
+            doc.text('Bairro:', margin, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(document.getElementById('bairro').value || 'Não informado', margin + 15, yPos);
+            
+            doc.setFont('helvetica', 'bold');
+            doc.text('Cidade:', margin + 50, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(document.getElementById('cidade').value || 'Não informado', margin + 65, yPos);
+            
+            doc.setFont('helvetica', 'bold');
+            doc.text('CEP:', margin + 100, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(document.getElementById('cep').value || 'Não informado', margin + 110, yPos);
+            yPos += 10;
+
+            // Seção Equipamento - Título
+            doc.setDrawColor(44, 62, 80);
+            doc.setLineWidth(0.5);
+            doc.line(margin, yPos - 5, pageWidth - margin, yPos - 5);
+            
+            doc.setFontSize(12);
+            doc.setTextColor(44, 62, 80);
+            doc.setFont('helvetica', 'bold');
+            doc.text('DADOS DO EQUIPAMENTO', margin, yPos);
+            yPos += 8;
+
+            // Seção Equipamento - Conteúdo
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            
+            // Linha 1
+            doc.setFont('helvetica', 'bold');
+            doc.text('Marca:', margin, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(document.getElementById('marca').value, margin + 15, yPos);
+            
+            doc.setFont('helvetica', 'bold');
+            doc.text('Modelo:', margin + 50, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(document.getElementById('modelo').value, margin + 65, yPos);
+            
+            doc.setFont('helvetica', 'bold');
+            doc.text('Cor:', margin + 100, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(document.getElementById('cor').value || 'Não informado', margin + 110, yPos);
+            yPos += 5;
+
+            // Linha 2
+            doc.setFont('helvetica', 'bold');
+            doc.text('IMEI 1:', margin, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(document.getElementById('imei1').value || 'Não informado', margin + 18, yPos);
+            
+            doc.setFont('helvetica', 'bold');
+            doc.text('IMEI 2:', margin + 50, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(document.getElementById('imei2').value || 'Não informado', margin + 65, yPos);
+            yPos += 5;
+
+            // Linha 3
+            doc.setFont('helvetica', 'bold');
+            doc.text('Nº Série:', margin, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(document.getElementById('num_serie').value || 'Não informado', margin + 20, yPos);
+            
+            doc.setFont('helvetica', 'bold');
+            doc.text('Bateria:', margin + 50, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(document.getElementById('bateria').value || 'Não informado', margin + 65, yPos);
+            
+            doc.setFont('helvetica', 'bold');
+            doc.text('Acessório:', margin + 100, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(document.getElementById('acessorio').value || 'Não informado', margin + 120, yPos);
+            yPos += 5;
+
+            // Linha 4
+            doc.setFont('helvetica', 'bold');
+            doc.text('Senha:', margin, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(document.getElementById('senha').value || 'Não informado', margin + 15, yPos);
+            yPos += 10;
+
+            // Seção Problemas - Título
+            doc.setDrawColor(44, 62, 80);
+            doc.setLineWidth(0.5);
+            doc.line(margin, yPos - 5, pageWidth - margin, yPos - 5);
+            
+            doc.setFontSize(12);
+            doc.setTextColor(44, 62, 80);
+            doc.setFont('helvetica', 'bold');
+            doc.text('DESCRIÇÃO DO PROBLEMA', margin, yPos);
+            yPos += 8;
+
+            // Seção Problemas - Conteúdo
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            
+            // Obter problemas selecionados
+            const problemas = [];
+            const checkboxes = document.querySelectorAll('input[name="problema[]"]:checked');
+            checkboxes.forEach(checkbox => {
+                problemas.push(checkbox.value);
+            });
+
+            if (problemas.length > 0) {
+                // Configurações de layout
+                const col1 = margin;
+                const col2 = margin + 90;
+                const lineHeight = 6;
+                const maxWidth = 80;
+                
+                // Posição inicial
+                let currentCol = col1;
+                let currentY = yPos;
+                
+                for (let i = 0; i < problemas.length; i++) {
+                    // Verificar se precisa de nova página
+                    if (currentY > 250) {
+                        doc.addPage();
+                        currentY = 20;
+                        currentCol = col1;
+                    }
+                    
+                    // Quebra o texto em múltiplas linhas se necessário
+                    const lines = doc.splitTextToSize(`• ${problemas[i]}`, maxWidth);
+                    
+                    // Desenha cada linha do item
+                    for (let line of lines) {
+                        doc.text(line, currentCol, currentY);
+                        currentY += lineHeight;
+                        
+                        // Verificar novamente se precisa de nova página após cada linha
+                        if (currentY > 250) {
+                            doc.addPage();
+                            currentY = 20;
+                            currentCol = col1;
+                        }
+                    }
+                    
+                    // Alternar colunas a cada item
+                    if (i % 2 === 0) {
+                        currentCol = col2;
+                        currentY = yPos;
+                    } else {
+                        currentCol = col1;
+                        yPos = currentY;
+                    }
+                }
+                
+                // Atualiza a posição Y global
+                yPos = currentY;
+                
+                // Se número ímpar de itens, ajusta para próxima linha
+                if (problemas.length % 2 !== 0) {
+                    yPos += lineHeight;
+                }
+            } else {
+                doc.text('Nenhum problema específico selecionado', margin, yPos);
+                yPos += lineHeight;
+            }
+
+            // Observações
+            const obs = document.getElementById('obs').value;
+            if (obs) {
+                yPos += 10;
+                doc.setFont('helvetica', 'bold');
+                doc.text('Observações:', margin, yPos);
+                yPos += 5;
+                doc.setFont('helvetica', 'normal');
+                
+                const splitObs = doc.splitTextToSize(obs, maxWidth);
+                doc.text(splitObs, margin, yPos);
+                yPos += splitObs.length * 5;
+            }
+
+            yPos += 10;
+
+            // Seção Pagamento - Título
+            doc.setDrawColor(44, 62, 80);
+            doc.setLineWidth(0.5);
+            doc.line(margin, yPos - 5, pageWidth - margin, yPos - 5);
+            
+            doc.setFontSize(12);
+            doc.setTextColor(44, 62, 80);
+            doc.setFont('helvetica', 'bold');
+            doc.text('PAGAMENTO E GARANTIA', margin, yPos);
+            yPos += 8;
+
+            // Seção Pagamento - Conteúdo
+            doc.setFontSize(10);
+            doc.setTextColor(0, 0, 0);
+            
+            // Valor
+            doc.setFont('helvetica', 'bold');
+            doc.text('Valor:', margin, yPos);
+            doc.setFont('helvetica', 'normal');
+            doc.text(document.getElementById('valor').value || 'Não informado', margin + 15, yPos);
+            yPos += 5;
+
+            // Forma de pagamento
+            doc.setFont('helvetica', 'bold');
+            doc.text('Forma de pagamento:', margin, yPos);
+            doc.setFont('helvetica', 'normal');
+            const pagamento = document.querySelector('input[name="pagamento"]:checked');
+            doc.text(pagamento ? pagamento.value : 'Não informado', margin + 40, yPos);
+            yPos += 5;
+
+            // Garantia
+            doc.setFont('helvetica', 'bold');
+            doc.text('Garantia:', margin, yPos);
+            doc.setFont('helvetica', 'normal');
+            const garantia = document.querySelector('input[name="garantia"]:checked');
+            doc.text(garantia ? garantia.value : 'Não informado', margin + 20, yPos);
+            yPos += 15;
+
+            // Termos e Condições - Título
+            doc.setDrawColor(44, 62, 80);
+            doc.setLineWidth(0.5);
+            doc.line(margin, yPos - 5, pageWidth - margin, yPos - 5);
+            
+            doc.setFontSize(12);
+            doc.setTextColor(44, 62, 80);
+            doc.setFont('helvetica', 'bold');
+            doc.text('TERMOS E CONDIÇÕES', margin, yPos);
+            yPos += 8;
+
+            // Termos e Condições - Conteúdo
+            doc.setFontSize(9);
+            doc.setTextColor(0, 0, 0);
+            doc.setFont('helvetica', 'normal');
+            
+            const termos = [
+                "LEIA COM ATENÇÃO! Não aceitamos reclamações posteriores, por isso confira seu equipamento no ato do recebimento do mesmo!",
+                "Só efetuaremos a entrega do equipamento mediante apresentação deste documento!",
+                "Retirada por terceiros só com autorização e apresentação do documento do titular!",
+                "Prazo para retirada do aparelho é de 90 dias. A partir deste prazo, será cobrada uma taxa diária de 5% do valor do reparo."
+            ];
+            
+            for (let termo of termos) {
+                // Verificar se precisa de nova página
+                if (yPos > 250) {
+                    doc.addPage();
+                    yPos = 20;
+                }
+                
+                const splitTermo = doc.splitTextToSize(termo, maxWidth);
+                doc.text(splitTermo, margin, yPos);
+                yPos += splitTermo.length * 4;
+            }
+
+            yPos += 5;
+            doc.setFont('helvetica', 'italic');
+            doc.text('"Declaro ter lido atentamente e estar ciente que o aparelho está nas condições assinaladas acima"', margin, yPos, { maxWidth: maxWidth });
+            yPos += 10;
+
+            // Assinaturas
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Assinatura do Técnico:', margin, yPos);
+            doc.text('Assinatura do Cliente:', pageWidth / 2, yPos);
+            yPos += 5;
+            
+            // Captura valores dos campos de assinatura
+            const assTecnico = document.getElementById('assinatura-tecnico').value || '';
+            const assCliente = document.getElementById('assinatura-cliente').value || '';
+            
+            doc.setFont('helvetica', 'normal');
+            doc.line(margin, yPos, margin + 70, yPos);
+            doc.text(assTecnico, margin + 35, yPos + 3, { align: 'center' });
+            
+            doc.line(pageWidth / 2, yPos, pageWidth / 2 + 70, yPos);
+            doc.text(assCliente, pageWidth / 2 + 35, yPos + 3, { align: 'center' });
+            yPos += 10;
+
+            // Rodapé
+            doc.setFontSize(8);
+            doc.setTextColor(100, 100, 100);
+            doc.text('CTI Celular - Assistência Técnica Especializada', pageWidth / 2, yPos, { align: 'center' });
+
+            // Salva o PDF na variável global
+            generatedPdf = doc;
+            
+            // Converte o PDF para URL e exibe no modal
+            const pdfBlob = doc.output('blob');
+            const pdfUrl = URL.createObjectURL(pdfBlob);
+            pdfViewer.src = pdfUrl;
+            
+            // Exibe o modal
+            pdfModal.style.display = 'flex';
+        });
+
+        // Configura a data atual como padrão
+        document.getElementById('data').valueAsDate = new Date();
+    </script>
+</body>
+</html>
